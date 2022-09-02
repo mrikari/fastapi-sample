@@ -1,0 +1,17 @@
+version: '3.0'
+services:
+  api:
+    container_name: fastapisample
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env
+    volumes:
+      - ./app:/code/app
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    restart: always
+    tty: true

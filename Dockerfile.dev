@@ -1,0 +1,9 @@
+FROM python:3.9
+
+COPY requirements.txt /tmp/requirements.txt
+WORKDIR /code/app
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+COPY ./app /code/app
+COPY .env /code/app/.env
+
+CMD ["uvicorn", "--host", "0.0.0.0", "--reload", "--reload-dir", "/code/app", "main:app"]
