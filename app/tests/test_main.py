@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+
 from main import app
 
 client = TestClient(app)
@@ -13,7 +14,7 @@ def test_get_root():
 def test_get_info():
     response = client.get("/info")
     assert response.status_code == 200
-    
+
     res_json = response.json()
-    assert 'app_name' in res_json
-    assert 'app_version' in res_json
+    assert "app_name" in res_json
+    assert "app_version" in res_json
