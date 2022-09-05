@@ -1,20 +1,11 @@
 from fastapi import FastAPI
 
-from events import startup, shutdown
 from dependencies import get_settings
-from routers import todo, root
-
+from events import shutdown, startup
+from routers import root, todo
 
 conf = get_settings()
 
-app = FastAPI(
-    title=conf.app_name,
-    version=conf.app_version,
-    debug=conf.debug,
-    on_startup=[startup],
-    on_shutdown=[shutdown],
-    routes=[*todo.router.routes, *root.router_v3.routes],
-)
 
 app1 = FastAPI(
     title=conf.app_name,
@@ -31,7 +22,7 @@ app2 = FastAPI(
     debug=conf.debug,
     on_startup=[startup],
     on_shutdown=[shutdown],
-    routes=[*todo.router.routes, *root.router_v2.routes],
+    routes=[*root.router_v2.routes, *app1.router.routes],
 )
 
 app3 = FastAPI(
@@ -40,7 +31,16 @@ app3 = FastAPI(
     debug=conf.debug,
     on_startup=[startup],
     on_shutdown=[shutdown],
-    routes=[*todo.router.routes, *root.router_v3.routes],
+    routes=[*root.router_v3.routes, *app2.router.routes],
+)
+
+app = FastAPI(
+    title=conf.app_name,
+    version=conf.app_version,
+    debug=conf.debug,
+    on_startup=[startup],
+    on_shutdown=[shutdown],
+    routes=app3.routes,
 )
 
 app.mount('/v1', app1)
