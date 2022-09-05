@@ -1,40 +1,48 @@
-from fastapi import Depends, FastAPI
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
 
-from config.settings import Settings
-from database import database
+from events import startup, shutdown
 from dependencies import get_settings
-from routers import todo
+from routers import todo, root
+
 
 conf = get_settings()
+
 app = FastAPI(
     title=conf.app_name,
     version=conf.app_version,
     debug=conf.debug,
+    on_startup=[startup],
+    on_shutdown=[shutdown],
+    routes=[*todo.router.routes, *root.router_v3.routes],
 )
 
+app1 = FastAPI(
+    title=conf.app_name,
+    version=conf.app_version,
+    debug=conf.debug,
+    on_startup=[startup],
+    on_shutdown=[shutdown],
+    routes=[*todo.router.routes, *root.router.routes],
+)
 
-@app.on_event("startup")
-async def startup():
-    await database.connect()
+app2 = FastAPI(
+    title=conf.app_name,
+    version=conf.app_version,
+    debug=conf.debug,
+    on_startup=[startup],
+    on_shutdown=[shutdown],
+    routes=[*todo.router.routes, *root.router_v2.routes],
+)
 
+app3 = FastAPI(
+    title=conf.app_name,
+    version=conf.app_version,
+    debug=conf.debug,
+    on_startup=[startup],
+    on_shutdown=[shutdown],
+    routes=[*todo.router.routes, *root.router_v3.routes],
+)
 
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
-
-
-@app.get("/")
-def root():
-    return JSONResponse(content={"message": "It works!"})
-
-
-@app.get("/info")
-def get_info(settings: Settings = Depends(get_settings)):
-    return {
-        "app_name": settings.app_name,
-        "app_version": settings.app_version,
-    }
-
-
-app.include_router(todo.router)
+app.mount('/v1', app1)
+app.mount('/v2', app2)
+app.mount('/v3', app3)
