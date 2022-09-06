@@ -22,7 +22,10 @@ app2 = FastAPI(
     debug=conf.debug,
     on_startup=[startup],
     on_shutdown=[shutdown],
-    routes=[*root.router_v2.routes, *app1.router.routes],
+    routes=[
+        *root.router_v2.routes,
+        *todo.router_v2.routes,
+    ],
 )
 
 app3 = FastAPI(
@@ -43,6 +46,6 @@ app = FastAPI(
     routes=app3.routes,
 )
 
-app.mount('/v1', app1)
-app.mount('/v2', app2)
-app.mount('/v3', app3)
+app.mount("/v1", app1)
+app.mount("/v2", app2)
+app.mount("/v3", app3)

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TodoItem(BaseModel):
@@ -16,3 +16,15 @@ class Todo(TodoItem):
 
 class CreateTodo(TodoItem):
     pass
+
+
+class CreateTodoResult(BaseModel):
+    id: int = Field(None, title="追加したTodoのID")
+
+
+class DeleteTodoResult(BaseModel):
+    count: int = Field(None, title="削除したTodo数")
+
+
+class UpdateTodoResult(BaseModel):
+    count: int = Field(None, title="更新したTodo数")
