@@ -1,7 +1,6 @@
 from databases import Database
-from sqlalchemy import MetaData, create_engine
-
 from dependencies import get_settings
+from sqlalchemy import MetaData, create_engine
 
 SQLALCHEMY_DATABASE_URL = get_settings().database_url
 
