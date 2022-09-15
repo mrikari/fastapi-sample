@@ -1,21 +1,17 @@
-from sqlalchemy import delete, insert, select, update
-
 from database import database
-from models.todo import (CreateTodoResult, DeleteTodoResult, Todo,
-                         UpdateTodoResult)
+from models.todo import (
+    CreateTodoResult,
+    DeleteTodoResult,
+    Todo,
+    UpdateTodoResult,
+)
 from schemas.todo import todos
+from sqlalchemy import delete, insert, select, update
 
 
 async def read_todo_list() -> list[Todo]:
     """"""
     stmt = select(todos)
-    result: list[Todo] = await database.fetch_all(stmt)
-    return result
-
-
-async def read_todo_list_v2(limit: int = None, offset: int = 0) -> list[Todo]:
-    """"""
-    stmt = select(todos).limit(limit).offset(offset)
     result: list[Todo] = await database.fetch_all(stmt)
     return result
 

@@ -1,7 +1,6 @@
+from database import metadata
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, Table
 from sqlalchemy.sql.functions import current_timestamp
-
-from database import metadata
 
 todos = Table(
     "Todos",

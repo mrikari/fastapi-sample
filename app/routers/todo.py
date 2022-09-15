@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Body, Path
-
 from models.todo import CreateTodo, CreateTodoResult, Todo
-from routers import override_route
-from services.todo import (create_todo, delete_todo, read_todo, read_todo_list,
-                           read_todo_list_v2, update_complete)
+from services.todo import (
+    create_todo,
+    delete_todo,
+    read_todo,
+    read_todo_list,
+    update_complete,
+)
 
 router = APIRouter(prefix="/todos", tags=["Todo"])
 
@@ -36,17 +39,3 @@ async def change_complete_todo_item(id: int = Path(..., title="ID")):
 @router.post("/{id}/incomplete")
 async def change_incomplete_todo_item(id: int = Path(..., title="ID")):
     return await update_complete(id, False)
-
-
-router_v2 = APIRouter(
-    prefix="/todos",
-    tags=["Todo"],
-)
-
-
-@router_v2.get("", response_model=list[Todo])
-async def get_todos_v2(limit: int = None, offset: int = 0):
-    return await read_todo_list_v2(limit, offset)
-
-
-router_v2.routes += override_route(router.routes, router_v2.routes)
