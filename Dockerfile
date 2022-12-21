@@ -5,3 +5,5 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 COPY ./app /app
 COPY .env /app/.env
+
+RUN python -c "from database import create_all ; create_all()" 
