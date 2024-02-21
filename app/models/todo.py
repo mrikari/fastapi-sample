@@ -1,30 +1,30 @@
-from datetime import datetime
+from typing import Optional
+from uuid import UUID
+from pydantic import BaseModel
+from sqlmodel import SQLModel, Field
 
-from pydantic import BaseModel, Field
+from core.models import TimestampModel, UUIDModel
 
 
-class TodoItem(BaseModel):
+class TodoBase(SQLModel):
     title: str = Field("", title="タイトル", min_length=1)
     is_complete: bool = Field(False, title="完了")
 
 
-class Todo(TodoItem):
-    id: int = Field(..., title="ID")
-    created_at: datetime = Field(..., title="作成日時")
-    updated_at: datetime = Field(..., title="更新日時")
+class Todo(TimestampModel, TodoBase, UUIDModel, table=True):
+    __tablename__ = "todos"
 
 
-class CreateTodo(TodoItem):
-    pass
+### Response Models ###
 
 
-class CreateTodoResult(BaseModel):
-    id: int = Field(None, title="追加したTodoのID")
+class TodoCreate(TodoBase): ...
 
 
-class DeleteTodoResult(BaseModel):
-    count: int = Field(None, title="削除したTodo数")
+class TodoRead(BaseModel):
+    list: list[Todo]
 
 
-class UpdateTodoResult(BaseModel):
-    count: int = Field(None, title="更新したTodo数")
+class TodoPatch(TodoBase):
+    title: Optional[str] = Field(None, title="タイトル", min_length=1)
+    is_complete: Optional[bool] = Field(None, title="完了")

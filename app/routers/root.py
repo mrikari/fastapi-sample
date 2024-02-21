@@ -1,6 +1,6 @@
-from config.settings import Settings
-from dependencies import get_settings
-from fastapi import APIRouter, Depends
+from core.models import HealthCheck
+from core.config import settings
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="", tags=["Root"])
@@ -8,12 +8,14 @@ router = APIRouter(prefix="", tags=["Root"])
 
 @router.get("/")
 def root():
+    print(settings)
     return JSONResponse(content={"message": "It works!"})
 
 
-@router.get("/info")
-def get_info(settings: Settings = Depends(get_settings)):
-    return {
-        "app_name": settings.app_name,
-        "app_version": settings.app_version,
-    }
+@router.get("/health")
+def get_healthcheck():
+    return HealthCheck(
+        name=settings.app_name,
+        version=settings.app_version,
+        description=settings.description,
+    )

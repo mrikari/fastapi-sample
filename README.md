@@ -2,7 +2,9 @@
 
 # ことはじめ
 
-[uvicorn-gunicorn-fastapi-docker](https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker) を参考にまずは起動。
+##　起動
+
+まずは起動。
 
 ```bash
 docker-compose build --no-cache
@@ -11,23 +13,41 @@ docker-compose up -d
 
 うまく起動したら早速アクセス: [http://localhost:8000/](http://localhost:8000/)
 
-## 開発環境の整備
-
-HotReloadを設定して、開発中はコードを変更した場合に自動的にサーバーが再起動するようにする。
+## マイグレーションの適用
 
 ```bash
-docker-compose -f docker-compose.dev.yml  build
-docker-compose -f docker-compose.dev.yml up
+docker-compose exec app bash
 ```
 
-...うまく動かなかったのでPythonをインストールして動かす。
+ターミナルに入れたらマイグレーション実行
+
+```bash
+alembic upgrade head
+exit
+```
+
+# 開発環境の整備
+
+## Python仮想環境
 
 ```bash
 python -m venv .venv
 
 # for Windows
 source .venv/Scripts/activate
+# for Mac/Linux
+source .venv/bin/activate
+```
 
-pip install -r requirements.dev.txt
-uvicorn main:app --reload --app-dir ./app
+## マイグレーションのリビジョン作成
+
+```bash
+docker-compose exec app bash
+```
+
+ターミナルに入れたらマイグレーション実行
+
+```bash
+alembic revision --autogenerate -m "brabra"
+exit
 ```

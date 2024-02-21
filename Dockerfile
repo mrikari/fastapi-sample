@@ -1,9 +1,8 @@
-FROM tiangolo/uvicorn-gunicorn:python3.9-slim
+FROM python:3.12.2-slim-bookworm
 
 COPY requirements.txt /tmp/requirements.txt
+
+WORKDIR /code/app
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-COPY ./app /app
-COPY .env /app/.env
-
-RUN python -c "from database import create_all ; create_all()" 
+CMD ["uvicorn", "--host", "0.0.0.0", "--reload", "--reload-dir", "/code/app", "main:app"]

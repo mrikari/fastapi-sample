@@ -1,53 +1,49 @@
-from fastapi.exceptions import HTTPException
-from database import database
+from typing import Optional
+from uuid import UUID
+
+from sqlmodel import Session
 from models.todo import (
-    CreateTodoResult,
-    DeleteTodoResult,
     Todo,
-    UpdateTodoResult,
+    TodoCreate,
+    TodoPatch,
 )
-from schemas.todo import todos
-from sqlalchemy import delete, insert, select, update
+from repos.todo import TodoCRUD
 
 
-async def read_todo_list() -> list[Todo]:
+async def read_todo_list(session: Session) -> list[Todo]:
     """"""
-    stmt = select(todos)
-    result: list[Todo] = await database.fetch_all(stmt)
-    return result
+    todo = TodoCRUD(session=session)
+    return await todo.read()
 
 
-async def read_todo(id: int) -> Todo:
+async def read_todo(session: Session, id: str | UUID) -> Todo:
     """"""
-    stmt = select(todos).where(todos.c.id == id)
-    result: Todo = await database.fetch_one(stmt)
-    if result is None:
-        raise HTTPException(status_code=404)
-    return result
+    todo = TodoCRUD(session=session)
+    return await todo.get(todo_id=id)
 
 
 async def create_todo(
-    title: str, is_complete: bool = False
-) -> CreateTodoResult:
+    session: Session, title: str, is_complete: bool = False
+) -> Todo:
     """"""
-    stmt = insert(todos).values(title=title, is_complete=is_complete)
-    pk: int = await database.execute(stmt)
-    return CreateTodoResult(id=pk)
+    todo = TodoCRUD(session=session)
+    return await todo.create(data=TodoCreate(title=title, is_complete=is_complete))
 
 
-async def delete_todo(id: int) -> DeleteTodoResult:
+async def delete_todo(session: Session, id: str | UUID) -> bool:
     """"""
-    stmt = delete(todos).where(todos.c.id == id)
-    result: int = await database.execute(stmt)
-    if result == 0:
-        raise HTTPException(status_code=404)
-    return DeleteTodoResult(count=result)
+    todo = TodoCRUD(session=session)
+    return await todo.delete(todo_id=id)
 
 
-async def update_complete(id: int, flg: bool) -> UpdateTodoResult:
+async def patch_todo(
+    session: Session,
+    id: str | UUID,
+    title: Optional[str] = None,
+    flg: Optional[bool] = None,
+) -> Todo:
     """"""
-    stmt = update(todos).where(todos.c.id == id).values(is_complete=flg)
-    result: int = await database.execute(stmt)
-    if result == 0:
-        raise HTTPException(status_code=404)
-    return UpdateTodoResult(count=result)
+    todo = TodoCRUD(session=session)
+    return await todo.patch(
+        todo_id=id, data=TodoPatch(title=title, is_complete=flg)
+    )

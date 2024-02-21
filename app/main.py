@@ -1,16 +1,12 @@
-from dependencies import get_settings
-from events import shutdown, startup
+from core.config import settings
 from fastapi import FastAPI
 from routers import root, todo
 
-conf = get_settings()
-
 app = FastAPI(
-    title=conf.app_name,
-    version=conf.app_version,
-    debug=conf.debug,
-    on_startup=[startup],
-    on_shutdown=[shutdown],
+    title=settings.app_name,
+    version=settings.app_version,
+    description=settings.description,
+    debug=settings.debug,
 )
 
 app.include_router(root.router)
