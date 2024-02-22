@@ -1,13 +1,9 @@
 from typing import Optional
 from uuid import UUID
 
-from sqlmodel import Session
-from models.todo import (
-    Todo,
-    TodoCreate,
-    TodoPatch,
-)
+from models.todo import Todo, TodoCreate, TodoPatch
 from repos.todo import TodoCRUD
+from sqlmodel import Session
 
 
 async def read_todo_list(session: Session) -> list[Todo]:
@@ -22,9 +18,7 @@ async def read_todo(session: Session, id: str | UUID) -> Todo:
     return await todo.get(todo_id=id)
 
 
-async def create_todo(
-    session: Session, title: str, is_complete: bool = False
-) -> Todo:
+async def create_todo(session: Session, title: str, is_complete: bool = False) -> Todo:
     """"""
     todo = TodoCRUD(session=session)
     return await todo.create(data=TodoCreate(title=title, is_complete=is_complete))
@@ -45,5 +39,5 @@ async def patch_todo(
     """"""
     todo = TodoCRUD(session=session)
     return await todo.patch(
-        todo_id=id, data=TodoPatch(title=title, is_complete=flg)
+        todo_id=id, data=TodoPatch(title=title, is_complete=flg), exclude_none=True
     )

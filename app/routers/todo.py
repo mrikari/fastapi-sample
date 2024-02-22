@@ -1,7 +1,8 @@
+from typing import Annotated
 from uuid import UUID
-from fastapi import APIRouter, Body, Depends, Path
-from sqlmodel import Session
-from core.database import get_async_session
+
+from core.database import DBSession
+from fastapi import APIRouter, Body, Path
 from models.todo import TodoCreate, TodoPatch, TodoRead
 from services.todo import (
     create_todo,
@@ -11,6 +12,11 @@ from services.todo import (
     read_todo_list,
 )
 
+# request parameter/body annotated
+BodyTodoCreate = Annotated[TodoCreate, Body(..., title="Todo Data")]
+BodyTodoPatch = Annotated[TodoPatch, Body(..., title="Todo Data")]
+PathID = Annotated[UUID, Path(..., title="ID")]
+
 router = APIRouter(prefix="/todos", tags=["Todo"])
 
 
@@ -18,11 +24,12 @@ router = APIRouter(prefix="/todos", tags=["Todo"])
     "",
     summary="TODO一覧取得",
     description="登録されたTODOの一覧を返却する。",
-    response_model=TodoRead,
+    response_model=list[TodoRead],
 )
-async def get_todos(session: Session = Depends(get_async_session)):
+async def get_todos(session: DBSession):
     result = await read_todo_list(session=session)
-    return TodoRead(list=result)
+    return result
+
 
 @router.post(
     "",
@@ -30,10 +37,7 @@ async def get_todos(session: Session = Depends(get_async_session)):
     description="TODOを登録する。",
     response_model=TodoCreate,
 )
-async def create_todo_item(
-    session: Session = Depends(get_async_session),
-    body: TodoCreate = Body(..., title="Todo Data"),
-):
+async def create_todo_item(session: DBSession, body: BodyTodoCreate):
     return await create_todo(session, body.title, is_complete=body.is_complete)
 
 
@@ -43,8 +47,8 @@ async def create_todo_item(
     description="指定されたTODOを返却する。",
 )
 async def get_todo_item(
-    session: Session = Depends(get_async_session),
-    id: UUID = Path(..., title="ID"),
+    session: DBSession,
+    id: PathID,
 ):
     return await read_todo(session, id)
 
@@ -55,8 +59,8 @@ async def get_todo_item(
     description="指定されたTODOを削除する。",
 )
 async def delete_todo_item(
-    session: Session = Depends(get_async_session),
-    id: UUID = Path(..., title="ID"),
+    session: DBSession,
+    id: PathID,
 ) -> bool:
     return await delete_todo(session, id)
 
@@ -68,9 +72,9 @@ async def delete_todo_item(
     response_model=TodoPatch,
 )
 async def delete_todo_item(
-    session: Session = Depends(get_async_session),
-    id: UUID = Path(..., title="ID"),
-    body: TodoPatch = Body(..., title="Todo Data"),
+    session: DBSession,
+    id: PathID,
+    body: BodyTodoPatch,
 ):
     return await patch_todo(
         session,
@@ -87,8 +91,8 @@ async def delete_todo_item(
     response_model=TodoPatch,
 )
 async def change_complete_todo_item(
-    session: Session = Depends(get_async_session),
-    id: UUID = Path(..., title="ID"),
+    session: DBSession,
+    id: PathID,
 ):
     return await patch_todo(session, id, flg=True)
 
@@ -100,7 +104,7 @@ async def change_complete_todo_item(
     response_model=TodoPatch,
 )
 async def change_incomplete_todo_item(
-    session: Session = Depends(get_async_session),
-    id: UUID = Path(..., title="ID"),
+    session: DBSession,
+    id: PathID,
 ):
     return await patch_todo(session, id, flg=False)

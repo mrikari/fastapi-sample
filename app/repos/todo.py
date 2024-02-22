@@ -1,11 +1,11 @@
+from typing import Optional
 from uuid import UUID
 
 from fastapi import HTTPException
 from fastapi import status as http_status
+from models.todo import Todo, TodoCreate, TodoPatch
 from sqlalchemy import delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
-
-from models.todo import Todo, TodoCreate, TodoPatch
 
 
 class TodoCRUD:
@@ -24,14 +24,13 @@ class TodoCRUD:
     async def read(self) -> list[Todo]:
         statement = select(Todo)
         results = await self.session.exec(statement=statement)
-        items: list[Todo] = results.all()
-
+        items: list[Todo] = results.scalars()
         return items
 
     async def get(self, todo_id: str | UUID) -> Todo:
         statement = select(Todo).where(Todo.id == todo_id)
         results = await self.session.exec(statement=statement)
-        item: Todo | None = results.scalar_one_or_none()
+        item: Optional[Todo] = results.scalar_one_or_none()
 
         if item is None:
             raise HTTPException(
@@ -40,9 +39,11 @@ class TodoCRUD:
 
         return item
 
-    async def patch(self, todo_id: str | UUID, data: TodoPatch) -> Todo:
+    async def patch(
+        self, todo_id: str | UUID, data: TodoPatch, exclude_none: bool = False
+    ) -> Todo:
         item = await self.get(todo_id=todo_id)
-        values = data.model_dump(exclude_unset=True)
+        values = data.model_dump(exclude_unset=True, exclude_none=exclude_none)
 
         for k, v in values.items():
             setattr(item, k, v)

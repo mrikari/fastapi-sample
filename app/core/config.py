@@ -8,9 +8,7 @@ class Settings(BaseSettings):
     description: str = "fastapi sample"
     debug: bool = True
     database_dsn: PostgresDsn
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 settings = Settings(

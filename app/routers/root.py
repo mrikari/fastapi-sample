@@ -1,5 +1,5 @@
-from core.models import HealthCheck
 from core.config import settings
+from core.models import HealthCheck
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
@@ -8,7 +8,6 @@ router = APIRouter(prefix="", tags=["Root"])
 
 @router.get("/")
 def root():
-    print(settings)
     return JSONResponse(content={"message": "It works!"})
 
 

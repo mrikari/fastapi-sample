@@ -1,9 +1,7 @@
 from typing import Optional
-from uuid import UUID
-from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
 
 from core.models import TimestampModel, UUIDModel
+from sqlmodel import Field, SQLModel
 
 
 class TodoBase(SQLModel):
@@ -21,8 +19,7 @@ class Todo(TimestampModel, TodoBase, UUIDModel, table=True):
 class TodoCreate(TodoBase): ...
 
 
-class TodoRead(BaseModel):
-    list: list[Todo]
+class TodoRead(UUIDModel, TodoBase): ...
 
 
 class TodoPatch(TodoBase):

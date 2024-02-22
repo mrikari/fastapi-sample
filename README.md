@@ -16,7 +16,7 @@ docker-compose up -d
 ## マイグレーションの適用
 
 ```bash
-docker-compose exec app bash
+docker-compose exec api bash
 ```
 
 ターミナルに入れたらマイグレーション実行
@@ -42,7 +42,7 @@ source .venv/bin/activate
 ## マイグレーションのリビジョン作成
 
 ```bash
-docker-compose exec app bash
+docker-compose exec api bash
 ```
 
 ターミナルに入れたらマイグレーション実行
