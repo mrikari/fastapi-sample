@@ -1,6 +1,8 @@
-from core.config import settings
+from typing import Annotated
+
+from core.config import Settings, get_settings
 from core.models import HealthCheck
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="", tags=["Root"])
@@ -12,7 +14,7 @@ def root():
 
 
 @router.get("/health")
-def get_healthcheck():
+def get_healthcheck(settings: Annotated[Settings, Depends(get_settings)]):
     return HealthCheck(
         name=settings.app_name,
         version=settings.app_version,
