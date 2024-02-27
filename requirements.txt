@@ -1,8 +1,9 @@
-fastapi==0.109.2
+fastapi==0.110.0
 pydantic-settings==2.2.1
 sqlmodel==0.0.16
 uvicorn[standard]==0.27.1
 asyncpg==0.29.0
+httpx==0.26.0 # I'm looking forward to the upcoming release -> starlette(issue 2524)
 
 ### localhost
 greenlet==3.0.3
@@ -11,3 +12,4 @@ greenlet==3.0.3
 black
 isort
 alembic==1.13.1
+pytest==8.0.2
