@@ -2,7 +2,7 @@ from typing import Optional
 from uuid import UUID
 
 from models.todo import Todo, TodoCreate, TodoPatch
-from repos.todo import TodoCRUD
+from cruds.todo import TodoCRUD
 from sqlmodel import Session
 
 
