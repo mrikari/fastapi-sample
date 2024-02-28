@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from core.config import settings
+from core.config import get_db_settings
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -8,7 +8,7 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 async_engine = create_async_engine(
-    settings.database_dsn.unicode_string(), echo=True, future=True
+    get_db_settings().DATABASE_DSN.unicode_string(), echo=True, future=True
 )
 
 

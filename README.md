@@ -10,11 +10,19 @@
 .envファイル編集。
 
 ```bash
-# sample
-DEBUG=1
+# Site settings
+DEBUG=true
 APP_NAME="FastAPI Sample"
 APP_VERSION="1.0.0"
-DATABASE_DSN="postgresql+asyncpg://postgres:postgres@db:5432/sample"
+
+# Database settings
+DB_SCHEME=postgresql+asyncpg
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
+DB_PATH=sample
+# DATABASE_DSN=
 ```
 
 Docker起動。

@@ -1,8 +1,8 @@
 from typing import Optional
 from uuid import UUID
 
-from models.todo import Todo, TodoCreate, TodoPatch
 from cruds.todo import TodoCRUD
+from models.todo import Todo, TodoCreate, TodoPatch
 from sqlmodel import Session
 
 

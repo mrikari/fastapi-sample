@@ -16,7 +16,7 @@ def root():
 @router.get("/health")
 def get_healthcheck(settings: Annotated[Settings, Depends(get_settings)]):
     return HealthCheck(
-        name=settings.app_name,
-        version=settings.app_version,
-        description=settings.description,
+        name=settings.APP_NAME,
+        version=settings.APP_VERSION,
+        description=settings.APP_DESCRIPTION,
     )

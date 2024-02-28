@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlmodel import SQLModel
 from models.todo import Todo  # noqa: 'autogenerate' support
 
-from core.config import settings
+from core.config import get_db_settings
 
 config = context.config
 
@@ -50,7 +50,7 @@ def filter_db_objects(
 
 
 def run_migrations_offline() -> None:
-    url = settings.database_dsn.unicode_string()
+    url = get_db_settings().DATABASE_DSN.unicode_string()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -71,7 +71,7 @@ def do_run_migrations(connection):
 
 async def run_async_migrations() -> None:
     config_section = config.get_section(config.config_ini_section)
-    url = settings.database_dsn.unicode_string()
+    url = get_db_settings().DATABASE_DSN.unicode_string()
     config_section["sqlalchemy.url"] = url
 
     connectable = AsyncEngine(
@@ -91,7 +91,7 @@ async def run_async_migrations() -> None:
 
 async def run_migrations_online() -> None:
     config_section = config.get_section(config.config_ini_section)
-    url = settings.database_dsn.unicode_string()
+    url = get_db_settings().DATABASE_DSN.unicode_string()
     config_section["sqlalchemy.url"] = url
 
     connectable = AsyncEngine(
