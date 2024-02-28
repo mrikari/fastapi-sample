@@ -1,3 +1,4 @@
+import logging
 from functools import lru_cache
 from typing import Optional, Union
 
@@ -14,6 +15,7 @@ class Settings(BaseSettings):
     APP_SUMMARY: str = ""
     APP_VERSION: str = "1.0.0"
     APP_DESCRIPTION: str = "fastapi sample"
+    LOG_LEVEL: int = logging.INFO
     DEBUG: bool = False
 
     @field_validator("DEBUG", mode="before")
