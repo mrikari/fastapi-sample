@@ -48,13 +48,25 @@ docker-compose exec api alembic upgrade head
 
 ## Python仮想環境
 
+作成
+
 ```bash
 python -m venv .venv
+```
 
+起動
+
+```
 # for Windows
 source .venv/Scripts/activate
 # for Mac/Linux
 source .venv/bin/activate
+```
+
+開発環境用のモジュールインストール
+
+```
+pip install -r app/requirements.dev.txt
 ```
 
 ## マイグレーションのリビジョン作成

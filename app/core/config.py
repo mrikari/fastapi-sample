@@ -38,6 +38,7 @@ class DatabaseSettings(BaseSettings):
     DB_PORT: Optional[int] = None
     DB_PATH: Optional[str] = None
     DATABASE_DSN: Optional[PostgresDsn] = None
+    ECHO_STATEMENT: bool = False
 
     @field_validator("DATABASE_DSN", mode="before")
     @classmethod

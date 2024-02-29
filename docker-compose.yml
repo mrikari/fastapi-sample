@@ -3,12 +3,12 @@ services:
   api:
     container_name: fastapisample
     build:
-      context: .
+      context: app
       dockerfile: Dockerfile
     env_file:
       - .env
     volumes:
-      - ./app:/code/app
+      - ./app:/opt/app
     expose:
       - 8000
     ports:

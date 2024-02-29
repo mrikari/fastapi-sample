@@ -1,0 +1,14 @@
+.dockerignore
+Dockerfile
+tests
+requirements.dev.txt
+.DS_Store
+.env
+.env.*
+**/.env
+**/.env.*
+.git
+tmp
+ **/tmp
+__pycache__
+ **/__pycache__

@@ -4,7 +4,7 @@ from core.config import get_settings
 from fastapi import FastAPI
 from routers import root, todo
 
-logger = getLogger("uvicorn.app")
+logger = getLogger("uvicorn")
 
 _settings = get_settings()
 

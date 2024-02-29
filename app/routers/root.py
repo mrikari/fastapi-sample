@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="", tags=["Root"])
-logger = getLogger("uvicorn.app")
+logger = getLogger("uvicorn")
 
 
 @router.get("/")
