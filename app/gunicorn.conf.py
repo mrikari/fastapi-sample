@@ -1,22 +1,24 @@
 from logging import getLevelName
+
 from core.config import get_settings
+
 settings = get_settings()
 
-bind=['0.0.0.0:8000']
+bind = ["0.0.0.0:8000"]
 # backlog=2048
-workers=2
-worker_class="uvicorn.workers.UvicornWorker"
+workers = 1
+worker_class = "uvicorn.workers.UvicornWorker"
 # threads=1
-worker_connections=10000
+worker_connections = 10000
 # max_requests=0
-max_requests_jitter=500
+max_requests_jitter = 500
 # timeout=30
 # graceful_timeout=30
 # keepalive=2
 # limit_request_line=4094
 # limit_request_fields=100
 # limit_request_field_size=8190
-reload=True
+reload = True
 # reload_engine=auto
 # reload_extra_files=[]
 # spew=False
@@ -25,7 +27,7 @@ reload=True
 # preload_app=False
 # sendfile=None
 # reuse_port=False
-chdir="/opt/app"
+chdir = "/opt/app"
 # daemon=False
 # raw_env=[]
 # pidfile=None
@@ -37,11 +39,11 @@ chdir="/opt/app"
 # tmp_upload_dir=None
 # secure_scheme_headers={'X-FORWARDED-PROTOCOL'='ssl', 'X-FORWARDED-PROTO'='https', 'X-FORWARDED-SSL'='on'}
 # forwarded_allow_ips=['127.0.0.1']
-accesslog="-"
+accesslog = "-"
 # disable_redirect_access_to_syslog=False
 # access_log_format='%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
-errorlog="-"
-loglevel=str(getLevelName(settings.LOG_LEVEL)).lower()
+errorlog = "-"
+loglevel = str(getLevelName(settings.LOG_LEVEL)).lower()
 # capture_output=False
 # logger_class=gunicorn.glogging.Logger
 # logconfig=None

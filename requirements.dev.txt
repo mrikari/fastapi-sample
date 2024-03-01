@@ -2,6 +2,7 @@
 ### testclient
 httpx==0.26.0 # I'm looking forward to the upcoming release -> starlette(issue 2524)
 pytest==8.0.2
+pytest-cov==4.1.0
 
 ### localhost
 greenlet==3.0.3

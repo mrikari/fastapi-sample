@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     APP_DESCRIPTION: str = "fastapi sample"
     LOG_LEVEL: int = logging.INFO
+    LOG_NAME: str = "sampleapp"
     DEBUG: bool = False
 
     @field_validator("DEBUG", mode="before")
@@ -63,3 +64,8 @@ def get_settings():
 @lru_cache
 def get_db_settings():
     return DatabaseSettings()
+
+
+def get_logger():
+    _settings = get_settings()
+    return logging.getLogger(_settings.LOG_NAME)

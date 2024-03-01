@@ -1,18 +1,25 @@
-from logging import getLogger
+from logging import Formatter, StreamHandler
 
-from core.config import get_settings
+from core.config import get_logger, get_settings
 from fastapi import FastAPI
 from routers import root, todo
-
-logger = getLogger("uvicorn")
 
 _settings = get_settings()
 
 
 def lifespan(app: FastAPI):
-    logger.setLevel(_settings.LOG_LEVEL)
-    logger.debug(f"docs_url -> {app.docs_url}")
-    logger.debug(f"redoc_url -> {app.redoc_url}")
+    sampleapp_log_handler = StreamHandler()
+    sampleapp_log_handler.setFormatter(
+        Formatter(
+            "[%(pathname)s:%(lineno)d][%(levelname)s] %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S %z",
+        )
+    )
+    _logger = get_logger()
+    _logger.setLevel(_settings.LOG_LEVEL)
+    _logger.addHandler(sampleapp_log_handler)
+    _logger.debug(f"docs_url -> {app.docs_url}")
+    _logger.debug(f"redoc_url -> {app.redoc_url}")
     yield
 
 

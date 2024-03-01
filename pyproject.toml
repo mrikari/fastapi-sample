@@ -14,3 +14,21 @@ extend-exclude = '''
 profile = "black"
 skip_gitignore = true
 extend_skip_glob = ["**/migrations/*"]  # 自動生成されたDB migrationファイル
+
+[tool.pytest.ini_options]
+pythonpath = "app"
+filterwarnings = 'error'
+xfail_strict = true
+
+[tool.coverage.run]
+source = ['tests']
+branch = true
+
+[tool.coverage.report]
+precision = 2
+exclude_lines = [
+    'pragma: no cover',
+    'raise NotImplementedError',
+    'if TYPE_CHECKING:',
+    '@overload',
+]

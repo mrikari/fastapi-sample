@@ -1,14 +1,13 @@
 import logging
-from logging import getLogger
 from typing import Annotated
 
-from core.config import Settings, get_settings
+from core.config import Settings, get_logger, get_settings
 from core.models import HealthCheck
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="", tags=["Root"])
-logger = getLogger("uvicorn")
+logger = get_logger()
 
 
 @router.get("/")
