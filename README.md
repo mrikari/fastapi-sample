@@ -1,6 +1,20 @@
+
+# 概要
+
 [FastAPI](https://fastapi.tiangolo.com/) Sample 動作確認のために作っています。
 
-# ことはじめ
+# 目次
+
+- [概要](#概要)
+- [目次](#目次)
+- [はじめかた](#はじめかた)
+  - [起動](#起動)
+  - [マイグレーションの適用](#マイグレーションの適用)
+- [開発環境の整備](#開発環境の整備)
+  - [Python仮想環境](#python仮想環境)
+  - [マイグレーションのリビジョン作成](#マイグレーションのリビジョン作成)
+
+# はじめかた
 
 ## 起動
 
@@ -56,7 +70,7 @@ python -m venv .venv
 
 起動
 
-```
+```bash
 # for Windows
 source .venv/Scripts/activate
 # for Mac/Linux
@@ -65,7 +79,7 @@ source .venv/bin/activate
 
 開発環境用のモジュールインストール
 
-```
+```bash
 pip install -r app/requirements.dev.txt
 ```
 

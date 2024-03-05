@@ -6,7 +6,7 @@ from core.models import HealthCheck
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
-router = APIRouter(prefix="", tags=["Root"])
+router = APIRouter()
 logger = get_logger()
 
 

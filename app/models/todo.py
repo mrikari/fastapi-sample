@@ -16,10 +16,10 @@ class Todo(TimestampModel, TodoBase, UUIDModel, table=True):
 ### Response Models ###
 
 
+class TodoAbst(UUIDModel, TodoBase): ...
+
+
 class TodoCreate(TodoBase): ...
-
-
-class TodoRead(UUIDModel, TodoBase): ...
 
 
 class TodoPatch(TodoBase):

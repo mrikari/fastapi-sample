@@ -1,33 +1,26 @@
 from typing import Annotated
 from uuid import UUID
 
-from core.database import DBSession
-from fastapi import APIRouter, Body, Path
-from models.todo import TodoCreate, TodoPatch, TodoRead
-from services.todo import (
-    create_todo,
-    delete_todo,
-    patch_todo,
-    read_todo,
-    read_todo_list,
-)
+from fastapi import APIRouter, Body, Depends, Path
+from models.todo import TodoAbst, TodoCreate, TodoPatch
+from services.todo import ServiceFactory, TodoService
 
 # request parameter/body annotated
 BodyTodoCreate = Annotated[TodoCreate, Body(..., title="Todo Data")]
 BodyTodoPatch = Annotated[TodoPatch, Body(..., title="Todo Data")]
 PathID = Annotated[UUID, Path(..., title="ID")]
 
-router = APIRouter(prefix="/todos", tags=["Todo"])
+router = APIRouter()
 
 
 @router.get(
     "",
     summary="TODO一覧取得",
     description="登録されたTODOの一覧を返却する。",
-    response_model=list[TodoRead],
+    response_model=list[TodoAbst],
 )
-async def get_todos(session: DBSession):
-    result = await read_todo_list(session=session)
+async def get_todos(service: Annotated[TodoService, Depends(ServiceFactory())]):
+    result = await service.get_todo_list()
     return result
 
 
@@ -37,8 +30,14 @@ async def get_todos(session: DBSession):
     description="TODOを登録する。",
     response_model=TodoCreate,
 )
-async def create_todo_item(session: DBSession, body: BodyTodoCreate):
-    return await create_todo(session, body.title, is_complete=body.is_complete)
+async def create_todo_item(
+    service: Annotated[TodoService, Depends(ServiceFactory())],
+    body: BodyTodoCreate,
+):
+    return await service.create_todo(
+        title=body.title,
+        flg=body.is_complete,
+    )
 
 
 @router.get(
@@ -47,10 +46,11 @@ async def create_todo_item(session: DBSession, body: BodyTodoCreate):
     description="指定されたTODOを返却する。",
 )
 async def get_todo_item(
-    session: DBSession,
+    service: Annotated[TodoService, Depends(ServiceFactory())],
     id: PathID,
 ):
-    return await read_todo(session, id)
+    result = await service.get_todo(id)
+    return result
 
 
 @router.delete(
@@ -59,10 +59,10 @@ async def get_todo_item(
     description="指定されたTODOを削除する。",
 )
 async def delete_todo_item(
-    session: DBSession,
+    service: Annotated[TodoService, Depends(ServiceFactory())],
     id: PathID,
 ) -> bool:
-    return await delete_todo(session, id)
+    return await service.delete_todo(id)
 
 
 @router.patch(
@@ -72,16 +72,12 @@ async def delete_todo_item(
     response_model=TodoPatch,
 )
 async def delete_todo_item(
-    session: DBSession,
+    service: Annotated[TodoService, Depends(ServiceFactory())],
     id: PathID,
     body: BodyTodoPatch,
 ):
-    return await patch_todo(
-        session,
-        id,
-        title=body.title,
-        flg=body.is_complete,
-    )
+    result = await service.patch_todo(id, title=body.title, flg=body.is_complete)
+    return result
 
 
 @router.post(
@@ -91,10 +87,11 @@ async def delete_todo_item(
     response_model=TodoPatch,
 )
 async def change_complete_todo_item(
-    session: DBSession,
+    service: Annotated[TodoService, Depends(ServiceFactory())],
     id: PathID,
 ):
-    return await patch_todo(session, id, flg=True)
+    result = await service.set_complete(id)
+    return result
 
 
 @router.post(
@@ -104,7 +101,8 @@ async def change_complete_todo_item(
     response_model=TodoPatch,
 )
 async def change_incomplete_todo_item(
-    session: DBSession,
+    service: Annotated[TodoService, Depends(ServiceFactory())],
     id: PathID,
 ):
-    return await patch_todo(session, id, flg=False)
+    result = await service.set_incomplete(id)
+    return result

@@ -2,7 +2,7 @@ from logging import Formatter, StreamHandler
 
 from core.config import get_logger, get_settings
 from fastapi import FastAPI
-from routers import root, todo
+from routers import api_router
 
 _settings = get_settings()
 
@@ -35,5 +35,4 @@ app = FastAPI(
     ],
 )
 
-app.include_router(root.router)
-app.include_router(todo.router)
+app.include_router(api_router)

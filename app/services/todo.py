@@ -1,43 +1,115 @@
-from typing import Optional
-from uuid import UUID
+from abc import ABC, abstractclassmethod
+from typing import Annotated, Literal
+from uuid import UUID, uuid4
 
-from cruds.todo import TodoCRUD
-from models.todo import Todo, TodoCreate, TodoPatch
-from sqlmodel import Session
-
-
-async def read_todo_list(session: Session) -> list[Todo]:
-    """"""
-    todo = TodoCRUD(session=session)
-    return await todo.read()
+from fastapi import Depends
+from models.todo import Todo
+from repositories.todo import RepositoryFactory, TodoRepository
 
 
-async def read_todo(session: Session, id: str | UUID) -> Todo:
-    """"""
-    todo = TodoCRUD(session=session)
-    return await todo.get(todo_id=id)
+class TodoService(ABC):
+    repo: TodoRepository
+
+    @abstractclassmethod
+    async def get_todo_list(self) -> list[Todo]: ...
+    @abstractclassmethod
+    async def get_todo(self, id: UUID) -> Todo | None: ...
+    @abstractclassmethod
+    async def create_todo(self, title: str, flg: bool) -> Todo: ...
+    @abstractclassmethod
+    async def delete_todo(self, id: UUID) -> bool: ...
+    @abstractclassmethod
+    async def patch_todo(
+        self, id, title: str | None = None, flg: bool | None = None
+    ) -> Todo: ...
+    @abstractclassmethod
+    async def set_complete(self, id: UUID) -> Todo: ...
+    @abstractclassmethod
+    async def set_incomplete(self, id: UUID) -> Todo: ...
 
 
-async def create_todo(session: Session, title: str, is_complete: bool = False) -> Todo:
-    """"""
-    todo = TodoCRUD(session=session)
-    return await todo.create(data=TodoCreate(title=title, is_complete=is_complete))
+class TodoServiceImpl(TodoService):
+    def __init__(self, repo: TodoRepository) -> None:
+        self.repo = repo
+
+    async def get_todo_list(self):
+        items = await self.repo.retrieve()
+        return items
+
+    async def get_todo(self, id):
+        items = await self.repo.retrieve(id=id)
+        if len(items) == 0:
+            return None
+        return items[0]
+
+    async def create_todo(self, title: str, flg: bool):
+        item = Todo(title=title, is_complete=flg)
+        await self.repo.create(todo=item)
+        return item
+
+    async def delete_todo(self, id):
+        await self.repo.delete(id)
+        return True
+
+    async def patch_todo(self, id, title: str, flg: bool):
+        update_field = Todo()
+        if title:
+            update_field.title = title
+        if flg is not None:
+            update_field.is_complete = flg
+        await self.repo.update(id, update_field)
+        items = await self.repo.retrieve(id=id)
+        return items[0]
+
+    async def set_complete(self, id):
+        update_field = Todo(is_complete=True)
+        await self.repo.update(id, update_field)
+        items = await self.repo.retrieve(id=id)
+        return items[0]
+
+    async def set_incomplete(self, id):
+        update_field = Todo(is_complete=False)
+        await self.repo.update(id, update_field)
+        items = await self.repo.retrieve(id=id)
+        return items[0]
 
 
-async def delete_todo(session: Session, id: str | UUID) -> bool:
-    """"""
-    todo = TodoCRUD(session=session)
-    return await todo.delete(todo_id=id)
+class TodoServiceMock(TodoService):
+    def __init__(self, repo: TodoRepository) -> None:
+        self.repo = repo
+
+    async def get_todo_list(self) -> list[Todo]:
+        return [
+            Todo(id=uuid4(), title="mock1", is_complete=False),
+            Todo(id=uuid4(), title="mock2", is_complete=False),
+            Todo(id=uuid4(), title="mock3", is_complete=True),
+        ]
+
+    async def get_todo(self, id) -> Todo:
+        return Todo(id=uuid4(), title="mock", is_complete=False)
+
+    async def create_todo(self, title: str, flg: bool) -> Todo:
+        return Todo(id=uuid4(), title=title, is_complete=flg)
+
+    async def delete_todo(self, id): ...
+    async def patch_todo(self, id, title: str, flg: bool) -> Todo:
+        return Todo(id=uuid4(), title="mock-patch", is_complete=True)
+
+    async def set_complete(self, id): ...
+    async def set_incomplete(self, id): ...
 
 
-async def patch_todo(
-    session: Session,
-    id: str | UUID,
-    title: Optional[str] = None,
-    flg: Optional[bool] = None,
-) -> Todo:
-    """"""
-    todo = TodoCRUD(session=session)
-    return await todo.patch(
-        todo_id=id, data=TodoPatch(title=title, is_complete=flg), exclude_none=True
-    )
+class ServiceFactory:
+    def __init__(self, type: Literal["impl", "mock"] = "impl") -> None:
+        self._type = type
+
+    def __call__(
+        self,
+        repo: Annotated[TodoRepository, Depends(RepositoryFactory(type="asyncdb"))],
+    ):
+        if self._type == "impl":
+            return TodoServiceImpl(repo)
+        elif self._type == "mock":
+            return TodoServiceMock(repo)
+        else:
+            return TodoServiceImpl(repo)
