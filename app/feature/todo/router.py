@@ -1,14 +1,16 @@
 from typing import Annotated
 from uuid import UUID
 
+from domain.todo.model import TodoAbst, TodoCreate, TodoPatch
 from fastapi import APIRouter, Body, Depends, Path
-from models.todo import TodoAbst, TodoCreate, TodoPatch
-from services.todo import ServiceFactory, TodoService
+from feature.todo.dependencies import get_todo_service
+from feature.todo.service import TodoService
 
 # request parameter/body annotated
 BodyTodoCreate = Annotated[TodoCreate, Body(..., title="Todo Data")]
 BodyTodoPatch = Annotated[TodoPatch, Body(..., title="Todo Data")]
 PathID = Annotated[UUID, Path(..., title="ID")]
+DependsTodoService = Annotated[TodoService, Depends(get_todo_service)]
 
 router = APIRouter()
 
@@ -19,7 +21,7 @@ router = APIRouter()
     description="登録されたTODOの一覧を返却する。",
     response_model=list[TodoAbst],
 )
-async def get_todos(service: Annotated[TodoService, Depends(ServiceFactory())]):
+async def get_todos(service: DependsTodoService):
     result = await service.get_todo_list()
     return result
 
@@ -31,7 +33,7 @@ async def get_todos(service: Annotated[TodoService, Depends(ServiceFactory())]):
     response_model=TodoCreate,
 )
 async def create_todo_item(
-    service: Annotated[TodoService, Depends(ServiceFactory())],
+    service: DependsTodoService,
     body: BodyTodoCreate,
 ):
     return await service.create_todo(
@@ -46,7 +48,7 @@ async def create_todo_item(
     description="指定されたTODOを返却する。",
 )
 async def get_todo_item(
-    service: Annotated[TodoService, Depends(ServiceFactory())],
+    service: DependsTodoService,
     id: PathID,
 ):
     result = await service.get_todo(id)
@@ -59,7 +61,7 @@ async def get_todo_item(
     description="指定されたTODOを削除する。",
 )
 async def delete_todo_item(
-    service: Annotated[TodoService, Depends(ServiceFactory())],
+    service: DependsTodoService,
     id: PathID,
 ) -> bool:
     return await service.delete_todo(id)
@@ -72,7 +74,7 @@ async def delete_todo_item(
     response_model=TodoPatch,
 )
 async def delete_todo_item(
-    service: Annotated[TodoService, Depends(ServiceFactory())],
+    service: DependsTodoService,
     id: PathID,
     body: BodyTodoPatch,
 ):
@@ -87,7 +89,7 @@ async def delete_todo_item(
     response_model=TodoPatch,
 )
 async def change_complete_todo_item(
-    service: Annotated[TodoService, Depends(ServiceFactory())],
+    service: DependsTodoService,
     id: PathID,
 ):
     result = await service.set_complete(id)
@@ -101,7 +103,7 @@ async def change_complete_todo_item(
     response_model=TodoPatch,
 )
 async def change_incomplete_todo_item(
-    service: Annotated[TodoService, Depends(ServiceFactory())],
+    service: DependsTodoService,
     id: PathID,
 ):
     result = await service.set_incomplete(id)

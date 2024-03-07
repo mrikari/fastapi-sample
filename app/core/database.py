@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from core.config import get_db_settings
-from fastapi import Depends
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
@@ -24,9 +23,6 @@ async def get_async_session() -> AsyncSession:  # type: ignore
     )
     async with async_session() as session:
         yield session
-
-
-DBSession = Annotated[AsyncSession, Depends(get_async_session)]
 
 
 def create_all():

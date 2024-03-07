@@ -2,7 +2,7 @@ from logging import Formatter, StreamHandler
 
 from core.config import get_logger, get_settings
 from fastapi import FastAPI
-from routers import api_router
+from feature.routers import api_router
 
 _settings = get_settings()
 
