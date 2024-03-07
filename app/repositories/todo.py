@@ -1,6 +1,6 @@
 from abc import ABC, abstractclassmethod
 from datetime import datetime
-from typing import Any, Literal
+from typing import Any, Generic, Literal, TypeVar
 from uuid import UUID
 
 from core.database import DBSession
@@ -8,9 +8,11 @@ from models.todo import Todo
 from sqlmodel import delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+AnySession = TypeVar("AnySession")
 
-class TodoRepository(ABC):
-    def __init__(self, session: AsyncSession) -> None:
+
+class TodoRepository(ABC, Generic[AnySession]):
+    def __init__(self, session: AnySession) -> None:
         """非同期DBセッション
 
         Args:
@@ -58,7 +60,7 @@ class TodoRepository(ABC):
         """
 
 
-class TodoRepositoryImpl(TodoRepository):
+class TodoRepositoryImpl(TodoRepository[AsyncSession]):
     async def create(self, todo: Todo) -> None:
         self.session.add(todo)
         await self.session.commit()
