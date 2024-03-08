@@ -2,13 +2,17 @@ import logging
 from functools import lru_cache
 from typing import Optional, Union
 
-from pydantic import PostgresDsn, ValidationInfo, field_validator
+from pydantic import Extra, PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", case_sensitive=True
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        env_ignore_empty=True,
+        extra="allow",
     )
     # Site Settings
     APP_NAME: str = "sample"
@@ -29,7 +33,11 @@ class Settings(BaseSettings):
 
 class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", case_sensitive=True
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        env_ignore_empty=True,
+        extra="allow",
     )
     # Database Settings
     DB_SCHEME: Optional[str] = None

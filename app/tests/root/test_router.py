@@ -1,4 +1,12 @@
+from dotenv import load_dotenv
 from fastapi.testclient import TestClient
+from pathlib import Path
+
+ENV_FILE = Path(__file__).parent.parent.parent.parent.joinpath(".env")
+
+load_dotenv(ENV_FILE)
+
+
 from main import app
 
 client = TestClient(app, backend="asyncio")
