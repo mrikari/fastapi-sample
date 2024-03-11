@@ -1,6 +1,7 @@
+from pathlib import Path
+
 from dotenv import load_dotenv
 from fastapi.testclient import TestClient
-from pathlib import Path
 
 ENV_FILE = Path(__file__).parent.parent.parent.parent.joinpath(".env")
 

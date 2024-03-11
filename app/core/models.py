@@ -27,13 +27,13 @@ class UUIDModel(SQLModel):
 
 class TimestampModel(SQLModel):
     created_at: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=datetime.now,
         nullable=False,
         sa_column_kwargs={"server_default": text("current_timestamp(0)")},
     )
 
     updated_at: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=datetime.now,
         nullable=False,
         sa_column_kwargs={
             "server_default": text("current_timestamp(0)"),
