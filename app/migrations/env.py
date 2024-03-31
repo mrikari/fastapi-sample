@@ -7,7 +7,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlmodel import SQLModel
-from models.todo import Todo  # noqa: 'autogenerate' support
+import domain.models  # noqa: 'autogenerate' support
 
 from core.config import get_db_settings
 

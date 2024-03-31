@@ -1,13 +1,15 @@
+from contextlib import asynccontextmanager
 from logging import Formatter, StreamHandler
 
 from core.config import get_logger, get_settings
 from fastapi import FastAPI
-from routers import root, todo
+from feature.routers import api_router
 
 _settings = get_settings()
 
 
-def lifespan(app: FastAPI):
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     sampleapp_log_handler = StreamHandler()
     sampleapp_log_handler.setFormatter(
         Formatter(
@@ -35,5 +37,4 @@ app = FastAPI(
     ],
 )
 
-app.include_router(root.router)
-app.include_router(todo.router)
+app.include_router(api_router)
