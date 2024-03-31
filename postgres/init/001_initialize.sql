@@ -1,1 +1,2 @@
 CREATE DATABASE sample;
+CREATE DATABASE test_sample;

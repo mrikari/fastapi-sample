@@ -21,7 +21,7 @@ filterwarnings = 'error'
 xfail_strict = true
 
 [tool.coverage.run]
-source = ['tests']
+source = ['app/feature']
 branch = true
 
 [tool.coverage.report]
